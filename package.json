@@ -1,0 +1,26 @@
+{
+  "name": "bouncerjs",
+  "version": "0.1.0",
+  "description": "Activity based authorization for NodeJs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/malte-wessel/bouncerjs.git"
+  },
+  "keywords": [
+    "authorization"
+  ],
+  "author": "Malte Wessel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/malte-wessel/bouncerjs/issues"
+  },
+  "homepage": "https://github.com/malte-wessel/bouncerjs",
+  "dependencies": {
+    "async": "^0.9.0",
+    "lodash": "^2.4.1"
+  }
+}
