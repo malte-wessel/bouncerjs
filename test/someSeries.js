@@ -1,13 +1,13 @@
 var someSeries = require('../src/utils').someSeries;
 var test = require('tape');
 
-test('someSeries continue loop until the first iterator passes', function (t) {
+test('someSeries() continue loop until the first iterator passes', function (t) {
 	var counter = 0;
 	var itr = function(x, callback) {
 		counter++;
 		callback(x < 2 ? new Error() : null);
 	};
-
+	
 	someSeries([1, 2, 3], itr, function(err) {
 		t.ok(counter === 2, 'should break loop when the first iterator passes');
 		t.notOk(err instanceof Error, 'should not pass an error');
@@ -15,7 +15,7 @@ test('someSeries continue loop until the first iterator passes', function (t) {
 	});
 });
 
-test('someSeries no iterator passses', function(t) {
+test('someSeries() no iterator passses', function(t) {
 	var counter = 0;
 	var itr = function(x, callback) {
 		counter++;
@@ -30,7 +30,7 @@ test('someSeries no iterator passses', function(t) {
 	});
 });
 
-test('someSeries empty array', function (t) {
+test('someSeries() empty array', function (t) {
 	someSeries([], function(x, callback){
 		t.ok(false, 'iterator should not be called');
 		callback();
