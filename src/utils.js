@@ -58,7 +58,7 @@ function someSeries(arr, iterator, callback) {
 	iterate();
 }
 
-modules.exports = {
+module.exports = {
 	index: index,
 	getPath: getPath,
 	andSeries: andSeries,

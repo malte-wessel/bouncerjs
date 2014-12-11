@@ -5,8 +5,8 @@ var NotAuthenticatedError = require('./errors/NotAuthenticatedError');
 var operators = require('./operators.js');
 var utils = require('./utils.js');
 
-function Bouncer(extension) {
-	_.extend(this, extension);
+function Bouncer(options) {
+	_.extend(this, options);
 
 	this.activities = this.activities || {};
 	this.assertions = _.extend({}, this.assertions, operators);
@@ -20,12 +20,12 @@ Bouncer.prototype.onNotAuthenticated = function(req, res, next) {
 };
 
 // Middleware handler when user not authorized
-Bouncer.prototype.onNotAuthenticated = function(err, req, res, next) {
+Bouncer.prototype.onNotAuthorized = function(err, req, res, next) {
 	throw new Error('You need to implement an own `onNotAuthorized` method');
 };
 
 // Activity middleware
-Bouncer.prototype.onNotAuthenticated = function(name, params) {
+Bouncer.prototype.activity = function(name, params) {
 	var that = this;
 
 	return function(req, res, next) {
@@ -41,14 +41,14 @@ Bouncer.prototype.onNotAuthenticated = function(name, params) {
 	};
 };
 
-Bouncer.prototype.onNotAuthenticated = function(name, params, callback) {
+Bouncer.prototype.canPerformActivity = function(name, params, callback) {
 	return this._canPerformActivity(name, params, function(err) {
 		if(err) return callback(false);
 		return callback(true);
 	});
 };
 
-Bouncer.prototype.onNotAuthenticated = function(name, params, callback) {
+Bouncer.prototype._canPerformActivity = function(name, params, callback) {
 	// If `params` is a function, invoke it.
 	var paramsResult = _.isFunction(params) ? params() : _.clone(params || {});
 	// Not authenticated
@@ -66,7 +66,7 @@ Bouncer.prototype.onNotAuthenticated = function(name, params, callback) {
 	});
 };
 
-Bouncer.prototype.onNotAuthenticated = function(activities, params, callback) {
+Bouncer.prototype.permittedActivities = function(activities, params, callback) {
 	var that = this;
 	return async.filter(activities, 
 		function(name, cb) {
@@ -81,19 +81,19 @@ Bouncer.prototype.onNotAuthenticated = function(activities, params, callback) {
 	);
 };
 
-Bouncer.prototype.onNotAuthenticated = function(name) {
+Bouncer.prototype.getActivity = function(name) {
 	var fn = utils.getPath(name, this.activities);
 	if(!fn) throw new Error('Activity `' + name + '`not found.');
 	return fn;
 };
 
-Bouncer.prototype.onNotAuthenticated = function(name) {
+Bouncer.prototype.getAssertion = function(name) {
 	var fn = utils.getPath(name, this.assertions);
 	if(!fn) throw new Error('Assertion `' + name + '`not found.');
 	return fn;
 };
 
-Bouncer.prototype.onNotAuthenticated = function(assertions, callback) {
+Bouncer.prototype.assert = function(assertions, callback) {
 	var method = _.first(assertions),
 		methodFn = this.getAssertion(method),
 		args = _.rest(assertions);

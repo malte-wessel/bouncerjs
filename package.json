@@ -4,7 +4,7 @@
   "description": "Activity based authorization for NodeJs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tape test/*.js"
   },
   "repository": {
     "type": "git",
@@ -22,5 +22,8 @@
   "dependencies": {
     "async": "^0.9.0",
     "lodash": "^2.4.1"
+  },
+  "devDependencies": {
+    "tape": "^3.0.3"
   }
 }
