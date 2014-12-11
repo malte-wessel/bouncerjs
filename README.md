@@ -5,12 +5,18 @@ Activity based authorization for Nodejs
 
 [![Build Status](https://travis-ci.org/malte-wessel/bouncerjs.svg?branch=master)](https://travis-ci.org/malte-wessel/bouncerjs)
 
+## Install
+
+````
+npm install bouncerjs --save
+````
+
 ##Setup
 
 ```javascript
 var Bouncer = require('bouncerjs');
 
-// Define your activites, in this example, we got a model `Post` that will be updated by a user
+// Define your activites. In this example we got a model `Post` that will be updated by a user
 var activities = {
     post: {
         update: function(params) {
@@ -101,3 +107,6 @@ app.put('/post/:id',
 var server = app.listen(3000);
 
 ```
+
+##Documentation
+Work in progress!
