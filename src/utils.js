@@ -6,10 +6,11 @@ function getPath(path, obj) {
 	return path.split(':').reduce(index, obj);
 }
 
+// Borrowed from caolan/async eachSeries
 function andSeries(arr, iterator, callback) {
 	callback = callback || function () {};
 	if (!arr.length) {
-		return callback(new Error('No array to iterate over'));
+		return callback(new Error('Empty array'));
 	}
 	var completed = 0;
 	var iterate = function () {
@@ -32,11 +33,12 @@ function andSeries(arr, iterator, callback) {
 	iterate();
 }
 
+// Borrowed from caolan/async eachSeries
 function someSeries(arr, iterator, callback) {
 	var error;
 	callback = callback || function () {};
 	if (!arr.length) {
-		return callback(new Error('No array to iterate over'));
+		return callback(new Error('Empty array'));
 	}
 	var completed = 0;
 	var iterate = function () {
