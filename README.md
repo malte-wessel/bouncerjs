@@ -7,15 +7,16 @@ Activity based authorization for Nodejs
 
 ##Setup
 
-Create a file where you setup bouncerjs. Make sure that your export the created instance
-
 ```javascript
 var Bouncer = require('bouncerjs');
 
-// Define activites and assertions that will be tested
+// Define your activites, in this example, we got a model `Post` that will be updated by a user
 var activities = {
     post: {
         update: function(params) {
+            // Here you define which assertions will be tested in order
+            // to allow the user to perform the activity
+            // You can use the operators `OR` and `AND`.
             return ['OR',
                 ['user:isMemberOfGroup', params.user, 'admin'],
                 ['post:belongsToUser', params.user, params.postId]
@@ -63,6 +64,7 @@ var bouncer = new Bouncer({
     
     // Middleware handler when user not authorized
     onNotAuthorized: function(err, req, res, next) {
+        // For example: pass the error from the assertion
         next(err);
     }
 
@@ -82,6 +84,7 @@ var PostsController = require('./controllers/posts.js');
 var bouncer = require('./bouncer.js');
 
 app.put('/post/:id', 
+    // Use bouncer.activity() as a middleware
     bouncer.activity('post:update', function(req) {
         return {
            // You will always need to pass the user object in order to 
@@ -90,6 +93,8 @@ app.put('/post/:id',
            postId: req.param('id')
         }
     },
+    // If the user is allowed to perform the activity,
+    // the next middleware will be invoked.
     PostsController.update
 );
 
