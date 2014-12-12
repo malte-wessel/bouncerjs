@@ -1,6 +1,6 @@
 {
   "name": "bouncerjs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Activity based authorization for NodeJs",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,18 @@
     "url": "https://github.com/malte-wessel/bouncerjs.git"
   },
   "keywords": [
-    "authorization"
+    "authorization",
+    "authorized",
+    "authenticated",
+    "activities",
+    "activity",
+    "expressjs",
+    "express",
+    "security",
+    "cancan",
+    "roles",
+    "check",
+    "rules"
   ],
   "author": "Malte Wessel",
   "license": "MIT",
