@@ -134,7 +134,7 @@ var server = app.listen(3000);
 
 ##Documentation
 
-### `new Bouncer(options)`
+#### `new Bouncer(options)`
 
 * `options` {Object}
 	* `options.activities` {Object} Namespaced activities
@@ -145,7 +145,7 @@ var server = app.listen(3000);
 
 Create a new bouncer instance. Configurate bouncer with a hash of `options`.
 
-### `bouncer.activity(activity, params)`
+#### `bouncer.activity(activity, params)`
 
 * `activity` {String} Name of the activity
 * `params` {Function} Function that returns parameters for your assertions. Your assertions will use these parameters for evaluation.
@@ -183,7 +183,7 @@ app.get('/post/:id',
 var server = app.listen(3000);
 ```
 
-### `bouncer.canPerformActivity(activity, params, callback)`
+#### `bouncer.canPerformActivity(activity, params, callback)`
 
 * `activity` {String} Name of the activity
 * `params` {Function|Object} Function that returns parameters for your assertions. Your assertions will use these parameters for evaluation.
@@ -211,7 +211,7 @@ app.get('/post/:id', function(req, res, next) {
 });
 ```
 
-### `bouncer.permittedActivities(activities, params, callback)`
+#### `bouncer.permittedActivities(activities, params, callback)`
 
 * `activities` {Array} Array of activity names, bouncerjs will test each activity against the given user.
 * `params` {Function|Object} Function that returns parameters for your assertions. Your assertions will use these parameters for evaluation.
