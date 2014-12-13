@@ -133,4 +133,142 @@ var server = app.listen(3000);
 ```
 
 ##Documentation
-Work in progress!
+
+### `new Bouncer(options)`
+
+* `options` {Object}
+	* `options.activities` {Object} Namespaced activities
+	* `options.assertions` {Object} Namespaced assertions
+	* `options.onNotAuthenticated` {Function} Invoked when the `bouncer#activity()` middleware is used and the user is not authenticated.
+	* `options.onNotAuthorized` {Function} Invoked when the `bouncer#activity()` middleware is used and the user is not authorized.
+	* `options.NotAuthenticatedError` Error class, created and passed when user is not authenticated.
+
+Create a new bouncer instance. Configurate bouncer with a hash of `options`.
+
+### `bouncer.activity(activity, params)`
+
+* `activity` {String} Name of the activity
+* `params` {Function} Function that returns parameters for your assertions. Your assertions will use these parameters for evaluation.
+
+
+Returns a middleware function that determines whether or not the user is authorized to perform the given activity. The `params` function will be invoked with the `req` object, given by the user's request. Grab the required data for your assertions from `req` and return them. 
+
+**Note**: bouncerjs is all about authorization, not authentication. You will always need to pass a `user` object in order to tell bouncerjs that you have an authenticated user. If you do not pass a `user` object, bouncer assumes that the user is not authenticated and fails with a `NotAuthenticatedError`.
+
+#### Example
+
+```javascript
+var express = require('express');
+var app = express();
+var PostsController = require('./controllers/posts.js');
+
+// Require the bouncerjs instance
+var bouncer = require('./bouncer.js');
+
+app.get('/post/:id', 
+    // Use bouncer.activity() as a middleware
+    bouncer.activity('post:view', function(req) {
+        return {
+           // You will always need to pass the user object in order to 
+           // tell bouncerjs that you have an authenticated user.
+           user: req.user,
+           postId: req.param('id')
+        }
+    }),
+    // If the user is allowed to perform the activity,
+    // the next middleware will be invoked.
+    PostsController.view
+);
+
+var server = app.listen(3000);
+```
+
+### `bouncer.canPerformActivity(activity, params, callback)`
+
+* `activity` {String} Name of the activity
+* `params` {Function|Object} Function that returns parameters for your assertions. Your assertions will use these parameters for evaluation.
+* `callback` {Function} Will be invoked with `callback(isAuthorized)`.
+	* `isAuthorized` {Boolean} Will be `true` when authorization is successful, `false` if not.
+
+Determines whether or not the user is authorized to perform the given activity. If the user is not authorized to perform the activity, the passed `isAuthorized` value will be `false`. Otherwise it will be `true`. 
+
+#### Example
+
+
+```javascript
+app.get('/post/:id', function(req, res, next) {
+	
+	var params = {
+		user: req.user, 
+		postId: req.param('id'),
+	};
+	
+	bouncer.canPerformActivity('post:view', params, function(isAuthorized) {
+		// isAuthorized bill be true when 
+		// authorization is successful, false if not.
+	});
+
+});
+```
+
+### `bouncer.permittedActivities(activities, params, callback)`
+
+* `activities` {Array} Array of activity names, bouncerjs will test each activity against the given user.
+* `params` {Function|Object} Function that returns parameters for your assertions. Your assertions will use these parameters for evaluation.
+* `callback` {Function} Invoked with `callback(err, permittedActivities)`.
+	* `permittedActivities` {Array} Filtered list of activities, the user is authorized to perform.
+
+
+Sometimes you might want to test more than one activity against one user. Pass an array of activity names and the corresponding parameters to this function. The callback will be invoked with a filtered list of the given activities, the user is allowed to perform. If the user is not allowed to perform any of these activities, the array will be empty.
+
+#### Example
+
+```javascript
+app.get('/post/:id', function(req, res, next) {
+	
+	var activities = ['post:view', 'post:update', 'post:delete'];
+	
+	var params = {
+		user: req.user, 
+		postId: req.param('id'),
+	};	
+	
+	bouncer.permittedActivities(activities, params, function(err, permittedActivities) {
+		// `permittedActivities` might be ['post:view']
+	});
+
+});
+```
+
+### Operators
+
+#### `AND`
+
+Every single assertion must succeed.
+
+#### `OR`
+
+One of the assertions must succeed.
+
+All operators can be nested and used in conjunction. Have a look at the following code:
+
+```javascript
+var activities = {
+	store: function(params) {
+		return ['OR',
+			['user:isMemberOfGroup', params.user, 'admin'],
+			['AND', 
+				['category:belongsToUser', params.categoryId, params.user],
+				['category:typeIsNot', 'ads', params.categoryType],
+				['OR', 
+					['user:isMemberOfGroup', params.user, 'premium'],
+					['AND',
+						['user:isMemberOfGroup', params.user, 'user'],
+						['user:hasNotReachedPostCreationLimit', params.user]
+					]
+				]
+			]
+		[;
+	}
+}
+```
